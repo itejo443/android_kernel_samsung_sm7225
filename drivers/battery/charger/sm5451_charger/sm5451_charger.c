@@ -638,16 +638,16 @@ static int psy_chg_get_health(struct sm5451_charger *sm5451)
 	u8 flag, chg_on;
 
 	if (state == SM_DC_ERR) {
-		health = POWER_SUPPLY_HEALTH_DC_ERR;
+		health = POWER_SUPPLY_EXT_HEALTH_DC_ERR;
 		dev_info(sm5451->dev, "%s: chg_state=%d, health=%d\n",
 			__func__, state, health);
 	} else if (state >= SM_DC_PRE_CC && state <= SM_DC_CV) {
 		chg_on = sm5451_check_charging_enable(sm5451);
 		flag = sm5451_get_flag_status(sm5451, SM5451_REG_FLAG3);
 		if (chg_on == false) {
-			health = POWER_SUPPLY_HEALTH_DC_ERR;
+			health = POWER_SUPPLY_EXT_HEALTH_DC_ERR;
 		} else if (((flag >> 7) & 0x1) == 0x0) {    /* VBUS_POK status is disabled */
-			health = POWER_SUPPLY_HEALTH_DC_ERR;
+			health = POWER_SUPPLY_EXT_HEALTH_DC_ERR;
 		}
 
 		dev_info(sm5451->dev, "%s: chg_on=%d, flag3=0x%x, health=%d\n",
