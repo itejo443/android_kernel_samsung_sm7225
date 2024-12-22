@@ -59,7 +59,7 @@ echo "Running kernel make process..."
 make -C "$(pwd)" O="$output_dir" $KERNEL_MAKE_ENV LLVM=1 LLVM_IAS=1 CC="ccache $CC" CLANG_TRIPLE="$CLANG_TRIPLE" vendor/m23xq_eur_open_defconfig
 
 # Uncomment this if you need to adjust the kernel configuration manually
-make -C "$(pwd)" O="$output_dir" $KERNEL_MAKE_ENV LLVM=1 LLVM_IAS=1 CC="ccache $CC" CLANG_TRIPLE="$CLANG_TRIPLE" menuconfig
+# make -C "$(pwd)" O="$output_dir" $KERNEL_MAKE_ENV LLVM=1 LLVM_IAS=1 CC="ccache $CC" CLANG_TRIPLE="$CLANG_TRIPLE" menuconfig
 
 # Compile the kernel using the selected compiler (Clang or GCC)
 echo "Compiling the kernel..."
