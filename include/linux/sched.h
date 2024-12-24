@@ -1489,6 +1489,7 @@ struct task_struct {
 	int drawing_flag;
 	int drawing_mig_boost;
 #endif
+
 	/* task is frozen/stopped (used by the cgroup freezer) */
 	ANDROID_KABI_USE(1, unsigned frozen:1);
 
@@ -1500,6 +1501,20 @@ struct task_struct {
 
 	/* CPU-specific state of this task: */
 	struct thread_struct		thread;
+
+
+#ifdef CONFIG_KSU_SUSFS
+	u64 android_kabi_reserved8;
+#endif
+
+        // Android KABI reserved fields
+        u64 android_kabi_reserved1;
+        u64 android_kabi_reserved2;
+        u64 android_kabi_reserved3;
+        u64 android_kabi_reserved4;
+        u64 android_kabi_reserved5;
+        u64 android_kabi_reserved6;
+        u64 android_kabi_reserved7;
 
 	/*
 	 * WARNING: on x86, 'thread_struct' contains a variable-sized
