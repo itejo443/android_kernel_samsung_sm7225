@@ -1492,29 +1492,50 @@ struct task_struct {
 
 	/* task is frozen/stopped (used by the cgroup freezer) */
 	ANDROID_KABI_USE(1, unsigned frozen:1);
+	/* 095444fad7e3 ("futex: Replace PF_EXITPIDONE with a state") */
+	ANDROID_KABI_USE(2, unsigned int futex_state);
+	/*
+	 * f9b0c6c556db ("futex: Add mutex around futex exit")
+	 * A struct mutex takes 32 bytes, or 4 64bit entries, so pick off
+	 * 4 of the reserved members, and replace them with a struct mutex.
+	 * Do the GENKSYMS hack to work around the CRC issues
+	 */
+#ifdef __GENKSYMS__
+	ANDROID_KABI_RESERVE(3);
+	ANDROID_KABI_RESERVE(4);
+	ANDROID_KABI_RESERVE(5);
+	#if defined(CONFIG_KSU_SUSFS)
+		ANDROID_KABI_USE(6, u64 susfs_task_state);
+	#else
+ 		ANDROID_KABI_RESERVE(6);
+	#endif // #if defined(CONFIG_KSU_SUSFS)
+#else
+	#if defined(CONFIG_KSU_SUSFS)
+		u64 susfs_task_state;
+	#endif
+ 	struct mutex			futex_exit_mutex;
+#endif
+	ANDROID_KABI_RESERVE(7);
+#ifdef CONFIG_KSU_SUSFS
+	ANDROID_KABI_USE(8, u64 susfs_last_fake_mnt_id);
+#else
+ 	ANDROID_KABI_RESERVE(8);
+#endif
 
 	/*
 	 * New fields for task_struct should be added above here, so that
 	 * they are included in the randomized portion of task_struct.
 	 */
+#if defined(CONFIG_KSU_SUSFS_SUS_MOUNT) && !defined(ANDROID_KABI_RESERVE)
+	u64 susfs_task_state;
+#endif
+#if defined(CONFIG_KSU_SUSFS_SUS_MOUNT) && !defined(ANDROID_KABI_RESERVE)
+	u64 android_kabi_reserved8;
+#endif
 	randomized_struct_fields_end
 
 	/* CPU-specific state of this task: */
 	struct thread_struct		thread;
-
-
-#ifdef CONFIG_KSU_SUSFS
-	u64 android_kabi_reserved8;
-#endif
-
-        // Android KABI reserved fields
-        u64 android_kabi_reserved1;
-        u64 android_kabi_reserved2;
-        u64 android_kabi_reserved3;
-        u64 android_kabi_reserved4;
-        u64 android_kabi_reserved5;
-        u64 android_kabi_reserved6;
-        u64 android_kabi_reserved7;
 
 	/*
 	 * WARNING: on x86, 'thread_struct' contains a variable-sized
