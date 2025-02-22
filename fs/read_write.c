@@ -442,8 +442,8 @@ ssize_t kernel_read(struct file *file, void *buf, size_t count, loff_t *pos)
 }
 EXPORT_SYMBOL(kernel_read);
 
-#ifdef CONFIG_KSU_SUSFS_SUS_SU
-extern bool susfs_is_sus_su_hooks_enabled;
+#ifdef CONFIG_KSU
+extern bool ksu_vfs_read_hook __read_mostly;
 extern int ksu_handle_vfs_read(struct file **file_ptr, char __user **buf_ptr,
 			size_t *count_ptr, loff_t **pos);
 #endif
@@ -451,8 +451,8 @@ extern int ksu_handle_vfs_read(struct file **file_ptr, char __user **buf_ptr,
 ssize_t vfs_read(struct file *file, char __user *buf, size_t count, loff_t *pos)
 {
 	ssize_t ret;
-#ifdef CONFIG_KSU_SUSFS_SUS_SU
-	if (unlikely(susfs_is_sus_su_hooks_enabled))
+#ifdef CONFIG_KSU 
+	if (unlikely(ksu_vfs_read_hook))
 		ksu_handle_vfs_read(&file, &buf, &count, &pos);
 #endif
 
@@ -628,7 +628,7 @@ ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count)
 
 SYSCALL_DEFINE3(read, unsigned int, fd, char __user *, buf, size_t, count)
 {
-	return ksys_read(fd, buf, count);
+ 	return ksys_read(fd, buf, count);
 }
 
 ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count)
